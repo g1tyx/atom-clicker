@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Ticker} from 'pixi.js';
+	import Analytics from './lib/components/Analytics.svelte';
 	import SEO from './lib/components/SEO.svelte';
 	import Canvas from './lib/components/Canvas.svelte';
 	import Toaster from './lib/components/Toaster.svelte';
@@ -57,6 +58,7 @@
 	mobile = window.innerWidth <= 900;
 }}/>
 
+<Analytics/>
 <svelte:head>
 	<SEO/>
 </svelte:head>

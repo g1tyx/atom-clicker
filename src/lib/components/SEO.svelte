@@ -22,8 +22,11 @@
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:creator" content={author}>
+<meta name="twitter:site" content={site}>
 <meta name="twitter:title" content={name}>
 <meta name="twitter:description" content={description}>
 <meta name="twitter:image" content="/atom.png">
+
+<meta name="canonical" content={site}>
 
 <title>{name}</title>
