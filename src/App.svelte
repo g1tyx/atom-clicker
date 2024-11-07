@@ -18,13 +18,13 @@
 	let saveLoop: number;
 
 	function update(ticker: Ticker) {
-		gameManager.addAtoms($atomsPerSecond * ticker.deltaTime / 1000);
+		gameManager.addAtoms($atomsPerSecond * ticker.deltaMS / 1000);
 	}
 
 	onMount(async () => {
 		gameManager.initialize();
 
-		while (!$app) {
+		while (!$app || !$app?.ticker) {
 			await new Promise(resolve => setTimeout(resolve, 100));
 		}
 
