@@ -17,6 +17,20 @@
 	.counter {
 		margin-bottom: 2rem;
 		text-align: center;
+
+		@media screen and (width <= 900px) {
+			margin-bottom: 1rem;
+
+			& .atoms {
+				font-size: 2.75rem;
+				line-height: 1.35;
+				margin-bottom: 0;
+			}
+
+			& .rate {
+				font-size: 1rem;
+			}
+		}
 	}
 
 	.atoms {

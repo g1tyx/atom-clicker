@@ -15,14 +15,16 @@
 	import {app} from './lib/stores/pixi';
 
 	const SAVE_INTERVAL = 1000;
-	let activeTab: 'upgrades' | 'achievements' = 'upgrades';
+	let activeTab: 'achievements' | 'buildings' | 'upgrades' = 'upgrades';
 	let saveLoop: number;
+	let mobile = false;
 
 	function update(ticker: Ticker) {
 		gameManager.addAtoms($atomsPerSecond * ticker.deltaMS / 1000);
 	}
 
 	onMount(async () => {
+		mobile = window.innerWidth <= 900;
 		gameManager.initialize();
 
 		while (!$app || !$app?.ticker) {
@@ -46,7 +48,13 @@
 	onDestroy(() => {
 		if (saveLoop) clearInterval(saveLoop);
 	});
+
+	$: mobile && activeTab && $app?.stage && $app?.queueResize();
 </script>
+
+<svelte:window on:resize={() => {
+	mobile = window.innerWidth <= 900;
+}}/>
 
 <main>
 	<Canvas/>
@@ -70,12 +78,22 @@
 					>
 						Achievements
 					</button>
+					{#if mobile}
+						<button
+							class:active={activeTab === 'buildings'}
+							on:click={() => activeTab = 'buildings'}
+						>
+							Buildings
+						</button>
+					{/if}
 				</div>
 				<div class="tab-content">
 					{#if activeTab === 'upgrades'}
 						<Upgrades/>
-					{:else}
+					{:else if activeTab === 'achievements'}
 						<Achievements/>
+					{:else if activeTab === 'buildings'}
+						<Buildings/>
 					{/if}
 				</div>
 			</div>
@@ -83,7 +101,9 @@
 				<Counter/>
 				<Atom/>
 			</div>
-			<Buildings/>
+			{#if !mobile}
+				<Buildings/>
+			{/if}
 		</div>
 	{/if}
 </main>
@@ -91,6 +111,10 @@
 <style>
 	main {
 		margin: 3rem auto;
+
+		@media screen and (width <= 900px) {
+			margin: 0;
+		}
 	}
 
 	.loading {
@@ -104,15 +128,31 @@
 		display: grid;
 		gap: 2rem;
 		grid-template-columns: 250px 1fr 250px;
+		grid-template-areas: 'upgrades atom buildings';
 		margin: 0 auto;
 		max-width: 1500px;
 		padding: 1rem;
+
+		@media screen and (width <= 900px) {
+			grid-template-columns: 1fr 1fr;
+			grid-template-areas:
+					'upgrades atom'
+					'buildings atom';
+			max-width: 100%;
+		}
+
+		@media screen and (width <= 700px) {
+			gap: 1rem;
+			grid-template-columns: 1fr;
+			grid-template-areas: 'atom' 'upgrades' 'buildings';
+		}
 	}
 
 	.left-panel {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		grid-area: upgrades;
 	}
 
 	.tabs {
@@ -146,6 +186,7 @@
 		flex-direction: column;
 		justify-content: start;
 		position: relative;
+		grid-area: atom;
 	}
 
 	.tab-content {

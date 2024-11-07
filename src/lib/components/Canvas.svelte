@@ -29,7 +29,7 @@
 		await app.init({
 			backgroundAlpha: 0,
 			antialias: true,
-			resizeTo: window,
+			resizeTo: document.body,
 		});
 
 		document.body.appendChild(app.canvas);

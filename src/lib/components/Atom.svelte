@@ -48,6 +48,9 @@
 
 <style>
 	.atom {
+		--electron-line-spacing: 50px;
+		--initial-electrons-spacing: 130px;
+		--nucleus-size: 60px;
 		--speed: 1;
 		align-items: center;
 		background: transparent;
@@ -56,6 +59,7 @@
 		display: flex;
 		margin-top: 5rem;
 		justify-content: center;
+		overflow: hidden;
 		position: relative;
 		transition: transform 0.1s;
 		width: 300px;
@@ -65,18 +69,25 @@
 		&.bonus {
 			--speed: 2;
 		}
+
+		@media screen and (width <= 600px) {
+			--electron-line-spacing: 30px;
+			--initial-electrons-spacing: 100px;
+			--nucleus-size: 50px;
+			margin-top: 0;
+		}
 	}
 
 	.nucleus {
 		background: radial-gradient(circle at 30% 30%, #4a90e2, #2c3e50);
 		border-radius: 50%;
 		box-shadow: 0 0 20px rgba(74, 144, 226, 0.5);
-		height: 60px;
-		width: 60px;
+		height: var(--nucleus-size);
+		width: var(--nucleus-size);
 	}
 
 	.electron-shell {
-		--radius: calc(130px + var(--line) * 50px);
+		--radius: calc(var(--initial-electrons-spacing) + var(--line) * var(--electron-line-spacing));
 		animation: rotate calc((4s + var(--line) * 2s) / var(--speed)) linear infinite;
 		border: 2px solid #4a90e210;
 		border-radius: 50%;

@@ -176,7 +176,6 @@ export const gameManager = {
 	},
 
 	unlockBuilding(type: BuildingType) {
-		console.log(get(buildings));
 		if (type in get(buildings)) return;
 
 		buildings.update(current => ({

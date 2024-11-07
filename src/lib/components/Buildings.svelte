@@ -47,6 +47,7 @@
 		background: rgba(0, 0, 0, 0.1);
 		border-radius: 8px;
 		padding: 1rem;
+		grid-area: buildings;
 	}
 
 	.building {
