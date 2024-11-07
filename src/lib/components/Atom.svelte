@@ -62,8 +62,8 @@
 		overflow: hidden;
 		position: relative;
 		transition: transform 0.1s;
-		width: 300px;
-		height: 300px;
+		width: 450px;
+		height: 450px;
 
 		&.bonus {
 			--speed: 2;
