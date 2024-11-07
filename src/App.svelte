@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Ticker} from 'pixi.js';
+	import SEO from './lib/components/SEO.svelte';
 	import Canvas from './lib/components/Canvas.svelte';
 	import Toaster from './lib/components/Toaster.svelte';
 	import BonusAtom from './lib/components/BonusAtom.svelte';
@@ -55,6 +56,10 @@
 <svelte:window on:resize={() => {
 	mobile = window.innerWidth <= 900;
 }}/>
+
+<svelte:head>
+	<SEO/>
+</svelte:head>
 
 <main>
 	<Canvas/>
