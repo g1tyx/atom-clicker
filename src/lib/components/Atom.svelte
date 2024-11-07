@@ -1,70 +1,34 @@
 <script lang="ts">
-	import {gsap} from 'gsap';
 	import {onDestroy} from 'svelte';
+	import {createClickParticle, createClickTextParticle, type Particle} from '../helpers/particles';
 	import {buildings, gameManager, clickPower, hasBonus, totalClicks} from '../stores/gameStore';
 	import {formatNumber} from '../utils';
+	import {particles} from '../stores/canvas';
 
-	let atomElement: HTMLDivElement;
 	let spawnInterval: number;
 
-	function createParticle(x: number, y: number) {
-		const particle = document.createElement('div');
-		particle.className = 'particle';
-		particle.style.left = `${x}px`;
-		particle.style.top = `${y}px`;
-		document.body.appendChild(particle);
-
-		gsap.to(particle, {
-			duration: 1,
-			x: (Math.random() - 0.5) * 100,
-			y: (Math.random() - 0.5) * 100,
-			opacity: 0,
-			onComplete: () => particle.remove(),
-		});
-	}
-
-	function createClick(x: number, y: number) {
-		const click = document.createElement('p');
-		click.className = 'click';
-		click.style.left = `${x}px`;
-		click.style.top = `${y}px`;
-		click.textContent = `+${formatNumber($clickPower)}`;
-		document.body.appendChild(click);
-
-		gsap.to(click, {
-			duration: 1,
-			scale: 1.5,
-			y: '-=50',
-			opacity: 0,
-			onComplete: () => click.remove(),
-		});
-	}
-
-	let timeout: number;
-
-	function handleClick(event: MouseEvent) {
+	async function handleClick(event: MouseEvent) {
 		gameManager.addAtoms($clickPower);
 		$totalClicks++;
 
-		clearTimeout(timeout);
-		atomElement.classList.remove('bounce');
-		setTimeout(() => atomElement.classList.add('bounce'));
-		timeout = setTimeout(() => atomElement.classList.remove('bounce'), 600);
+		// TODO: Re-add main atom animation
 
-		createClick(event.clientX, event.clientY);
+		const newParticles: Particle[]  = [];
+		newParticles.push(createClickTextParticle(event.clientX + Math.random() * 10, event.clientY + Math.random() * 10, `+${formatNumber($clickPower)}`));
+
 		for (let i = 0; i < 5; i++) {
-			createParticle(event.clientX, event.clientY);
+			newParticles.push(await createClickParticle(event.clientX + Math.random() * 10, event.clientY + Math.random() * 10));
 		}
+		particles.update(current => [...current,...newParticles]);
 	}
 
 	onDestroy(() => clearInterval(spawnInterval));
 </script>
 
 <div
-	bind:this={atomElement}
 	class="atom"
 	class:bonus={$hasBonus}
-	on:click={handleClick}
+	on:click={async (e) => await handleClick(e)}
 >
 	{#each Object.entries($buildings) as [name, data], i}
 		<div class="electron-shell" style="--line: {i}; --count: {data.count};">

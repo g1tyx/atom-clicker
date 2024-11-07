@@ -4,7 +4,7 @@
 </script>
 
 <div class="toaster">
-	{#each $toasts as toast (toast.id)}
+	{#each $toasts as toast}
 		<div class="toast" class:type={toast.type} transition:fade={{duration: 400}}>
 			<div class="top">
 				<h3>{toast.title}</h3>

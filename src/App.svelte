@@ -1,4 +1,6 @@
 <script lang="ts">
+	import {Ticker} from 'pixi.js';
+	import Canvas from './lib/components/Canvas.svelte';
 	import Toaster from './lib/components/Toaster.svelte';
 	import BonusAtom from './lib/components/BonusAtom.svelte';
 	import {onDestroy, onMount} from 'svelte';
@@ -9,32 +11,24 @@
 	import Upgrades from './lib/components/Upgrades.svelte';
 	import {setGlobals} from './lib/globals';
 	import {atomsPerSecond, gameManager, SAVE_KEY} from './lib/stores/gameStore';
+	import {app} from './lib/stores/pixi';
 
 	const SAVE_INTERVAL = 1000;
 	let activeTab: 'upgrades' | 'achievements' = 'upgrades';
-	let lastTick = Date.now();
-	let gameLoop: number;
 	let saveLoop: number;
 
-	onMount(() => {
+	function update(ticker: Ticker) {
+		gameManager.addAtoms($atomsPerSecond * ticker.deltaTime / 1000);
+	}
+
+	onMount(async () => {
 		gameManager.initialize();
 
-		// gameloop
-		/* gameLoop = setInterval(() => {
-			const now = Date.now();
-			const delta = (now - lastTick) / 1000;
-			gameManager.addAtoms($atomsPerSecond * delta);
-			lastTick = now;
-		}, 50); */
+		while (!$app) {
+			await new Promise(resolve => setTimeout(resolve, 100));
+		}
 
-		const gameLoop = () => {
-			const now = Date.now();
-			const delta = (now - lastTick) / 1000;
-			gameManager.addAtoms($atomsPerSecond * delta);
-			lastTick = now;
-			requestAnimationFrame(gameLoop);
-		};
-		requestAnimationFrame(gameLoop);
+		$app.ticker.add(update);
 
 		setGlobals();
 
@@ -49,49 +43,60 @@
 	});
 
 	onDestroy(() => {
-		if (gameLoop) clearInterval(gameLoop);
 		if (saveLoop) clearInterval(saveLoop);
 	});
 </script>
 
 <main>
-	<Toaster/>
-	<BonusAtom/>
-	<div class="game-container">
-		<div class="left-panel">
-			<div class="tabs">
-				<button
-					class:active={activeTab === 'upgrades'}
-					on:click={() => activeTab = 'upgrades'}
-				>
-					Upgrades
-				</button>
-				<button
-					class:active={activeTab === 'achievements'}
-					on:click={() => activeTab = 'achievements'}
-				>
-					Achievements
-				</button>
+	<Canvas/>
+	{#if $app === null}
+		<h1 class="loading">Loading...</h1>
+	{:else}
+		<Toaster/>
+		<BonusAtom/>
+		<div class="game-container">
+			<div class="left-panel">
+				<div class="tabs">
+					<button
+						class:active={activeTab === 'upgrades'}
+						on:click={() => activeTab = 'upgrades'}
+					>
+						Upgrades
+					</button>
+					<button
+						class:active={activeTab === 'achievements'}
+						on:click={() => activeTab = 'achievements'}
+					>
+						Achievements
+					</button>
+				</div>
+				<div class="tab-content">
+					{#if activeTab === 'upgrades'}
+						<Upgrades/>
+					{:else}
+						<Achievements/>
+					{/if}
+				</div>
 			</div>
-			<div class="tab-content">
-				{#if activeTab === 'upgrades'}
-					<Upgrades/>
-				{:else}
-					<Achievements/>
-				{/if}
+			<div class="central-area">
+				<Counter/>
+				<Atom/>
 			</div>
+			<Buildings/>
 		</div>
-		<div class="central-area">
-			<Counter/>
-			<Atom/>
-		</div>
-		<Buildings/>
-	</div>
+	{/if}
 </main>
 
 <style>
 	main {
 		margin: 3rem auto;
+	}
+
+	.loading {
+		color: white;
+		font-size: 3rem;
+		text-align: center;
+		margin-top: 20vh;
 	}
 
 	.game-container {

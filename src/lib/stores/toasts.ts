@@ -21,7 +21,7 @@ export function removeToast(id: number) {
 
 export function error(title: string, message: string, duration = 10_000) {
 	addToast({
-		id: Date.now(),
+		id: Date.now() + Math.floor(Math.random() * 100_000),
 		title,
 		message,
 		duration,
@@ -31,7 +31,7 @@ export function error(title: string, message: string, duration = 10_000) {
 
 export function info(title: string, message: string, duration = 10_000) {
 	addToast({
-		id: Date.now(),
+		id: Date.now() + Math.floor(Math.random() * 100_000),
 		title,
 		message,
 		duration,
@@ -41,7 +41,7 @@ export function info(title: string, message: string, duration = 10_000) {
 
 export function success(title: string, message: string, duration = 10_000) {
 	addToast({
-		id: Date.now(),
+		id: Date.now() + Math.floor(Math.random() * 100_000),
 		title,
 		message,
 		duration,
