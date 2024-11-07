@@ -1,4 +1,5 @@
 <script lang="ts">
+	import {BUILDINGS} from '../data/buildings';
 	import {onDestroy} from 'svelte';
 	import {createClickParticle, createClickTextParticle, type Particle} from '../helpers/particles';
 	import {buildings, gameManager, clickPower, hasBonus, totalClicks} from '../stores/gameStore';
@@ -30,7 +31,8 @@
 	class:bonus={$hasBonus}
 	on:click={async (e) => await handleClick(e)}
 >
-	{#each Object.entries($buildings) as [name, data], i}
+	{#each Object.keys(BUILDINGS).filter(name => name in $buildings) as name, i}
+		{@const data = $buildings[name]}
 		<div class="electron-shell" style="--line: {i}; --count: {data.count};">
 			{#each new Array(data.count) as _, j}
 				<div class="electron" style="--i: {j};"></div>

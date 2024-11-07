@@ -211,18 +211,18 @@ export const gameManager = {
 			count: 0
 		};
 
-		if (currentState.atoms >= currentBuilding.cost) {
-			atoms.update(current => current - currentBuilding.cost);
-			buildings.update(current => ({
-				...current,
-				[type]: {
-					...currentBuilding,
-					cost: Math.round(currentBuilding.cost * BUILDING_COST_MULTIPLIER),
-					rate: currentBuilding.rate,
-					count: currentBuilding.count + 1,
-				},
-			}));
-		}
+		if (currentState.atoms < currentBuilding.cost) return;
+
+		atoms.update(current => current - currentBuilding.cost);
+		buildings.update(current => ({
+			...current,
+			[type]: {
+				...currentBuilding,
+				cost: Math.round(currentBuilding.cost * BUILDING_COST_MULTIPLIER),
+				rate: currentBuilding.rate,
+				count: currentBuilding.count + 1,
+			},
+		}));
 	},
 
 	purchaseUpgrade(id: string) {
