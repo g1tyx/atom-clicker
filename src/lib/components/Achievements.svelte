@@ -47,7 +47,6 @@
 		gap: 1rem;
 		padding: 0.75rem;
 		transition: all 0.2s;
-		user-select: none;
 
 		&.locked {
 			cursor: not-allowed;

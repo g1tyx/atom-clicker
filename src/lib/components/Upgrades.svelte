@@ -51,7 +51,6 @@
 		cursor: pointer;
 		padding: 0.75rem;
 		transition: all 0.2s;
-		user-select: none;
 	}
 
 	.upgrade:hover:not(.disabled) {

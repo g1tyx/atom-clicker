@@ -64,7 +64,6 @@
 		transition: transform 0.1s;
 		width: 300px;
 		height: 300px;
-		user-select: none;
 
 		&.bonus {
 			--speed: 2;

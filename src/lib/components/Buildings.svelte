@@ -57,7 +57,6 @@
 		margin-top: 0.5rem;
 		padding: 0.75rem;
 		transition: all 0.2s;
-		user-select: none;
 
 		&.disabled {
 			cursor: not-allowed;
