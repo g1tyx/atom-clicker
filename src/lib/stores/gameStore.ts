@@ -3,16 +3,15 @@ import {BUILDING_COST_MULTIPLIER} from '../constants';
 import {ACHIEVEMENTS} from '../data/achievements';
 import {BUILDINGS, type BuildingType} from '../data/buildings';
 import {UPGRADES} from '../data/upgrades';
+import {loadSavedState, SAVE_KEY} from '../helpers/saves';
 import type {Building, GameState, PowerUp} from '../types';
 import {info} from './toasts';
-
-export const SAVE_KEY = 'atomic-clicker-save';
 
 // Individual stores
 export const achievements = writable<string[]>([]);
 export const activePowerUps = writable<PowerUp[]>([]);
 export const atoms = writable<number>(0);
-export const buildings = writable<Record<string, Building>>({});
+export const buildings = writable<Partial<Record<BuildingType, Building>>>({});
 export const lastSave = writable<number>(Date.now());
 export const totalClicks = writable<number>(0);
 export const upgrades = writable<string[]>([]);
@@ -103,59 +102,6 @@ export const buildingProductions = derived(
 	}
 );
 
-// Helper functions for state management
-function loadSavedState(): GameState | null {
-	try {
-		const saved = localStorage.getItem(SAVE_KEY);
-		if (saved) {
-			const savedState = JSON.parse(saved);
-			if (isValidGameState(savedState)) {
-				return savedState;
-			}
-		}
-	} catch (e) {
-		console.error('Failed to load saved game:', e);
-	}
-	return null;
-}
-
-function isValidGameState(state: any): state is GameState {
-	if (!state) return false;
-
-	const checks = [
-		[
-			'achievements',
-			Array.isArray
-		],
-		[
-			'activePowerUps',
-			Array.isArray
-		],
-		[
-			'atoms',
-			(v: any) => typeof v === 'number'
-		],
-		[
-			'buildings',
-			(v: any) => typeof v === 'object'
-		],
-		[
-			'lastSave',
-			(v: any) => typeof v === 'number'
-		],
-		[
-			'totalClicks',
-			(v: any) => typeof v === 'number'
-		],
-		[
-			'upgrades',
-			Array.isArray
-		],
-	] as const;
-
-	return checks.every(([key, validator]) => key in state && validator(state[key]));
-}
-
 // Game store manager
 export const gameManager = {
 	initialize() {
@@ -168,6 +114,9 @@ export const gameManager = {
 			lastSave.set(savedState.lastSave);
 			totalClicks.set(savedState.totalClicks);
 			upgrades.set(savedState.upgrades.filter(u => u in UPGRADES));
+
+			// Save in case of data migration
+			this.save();
 		}
 
 		// Check achievements periodically
@@ -208,7 +157,8 @@ export const gameManager = {
 		const currentBuilding = currentState.buildings[type] ?? {
 			cost: building.cost,
 			rate: building.rate,
-			count: 0
+			count: 0,
+			unlocked: true
 		};
 
 		if (currentState.atoms < currentBuilding.cost) return;
@@ -222,6 +172,21 @@ export const gameManager = {
 				rate: currentBuilding.rate,
 				count: currentBuilding.count + 1,
 			},
+		}));
+	},
+
+	unlockBuilding(type: BuildingType) {
+		console.log(get(buildings));
+		if (type in get(buildings)) return;
+
+		buildings.update(current => ({
+			...current,
+			[type]: {
+				cost: BUILDINGS[type].cost,
+				rate: BUILDINGS[type].rate,
+				count: 0,
+				unlocked: true
+			}
 		}));
 	},
 

@@ -4,6 +4,7 @@ export interface Building {
 	count: number;
 	cost: number;
 	rate: number;
+	unlocked: boolean;
 }
 
 export interface Upgrade {

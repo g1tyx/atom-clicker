@@ -10,7 +10,8 @@
 	import Counter from './lib/components/Counter.svelte';
 	import Upgrades from './lib/components/Upgrades.svelte';
 	import {setGlobals} from './lib/globals';
-	import {atomsPerSecond, gameManager, SAVE_KEY} from './lib/stores/gameStore';
+	import {SAVE_KEY} from './lib/helpers/saves';
+	import {atomsPerSecond, gameManager} from './lib/stores/gameStore';
 	import {app} from './lib/stores/pixi';
 
 	const SAVE_INTERVAL = 1000;
