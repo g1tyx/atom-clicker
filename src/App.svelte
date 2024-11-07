@@ -139,6 +139,7 @@
 		padding: 1rem;
 
 		@media screen and (width <= 900px) {
+			gap: 0;
 			grid-template-columns: 1fr 1fr;
 			grid-template-areas:
 					'upgrades atom'

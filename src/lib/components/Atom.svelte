@@ -69,10 +69,19 @@
 			--speed: 2;
 		}
 
+		@media screen and (width <= 1000px) {
+			--electron-line-spacing: 40px;
+			--initial-electrons-spacing: 110px;
+			width: 360px;
+			height: 360px;
+		}
+
 		@media screen and (width <= 600px) {
 			--electron-line-spacing: 30px;
 			--initial-electrons-spacing: 100px;
 			--nucleus-size: 50px;
+			width: 300px;
+			height: 300px;
 			margin-top: 0;
 		}
 	}
