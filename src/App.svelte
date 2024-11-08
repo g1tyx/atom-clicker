@@ -138,6 +138,7 @@
 		grid-template-areas: 'upgrades atom buildings';
 		margin: 0 auto;
 		max-width: 1500px;
+		overflow: hidden;
 		padding: 1rem;
 
 		@media screen and (width <= 900px) {

@@ -59,7 +59,6 @@
 		display: flex;
 		margin-top: 5rem;
 		justify-content: center;
-		overflow: hidden;
 		position: relative;
 		transition: transform 0.1s;
 		width: 450px;
