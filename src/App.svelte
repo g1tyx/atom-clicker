@@ -162,6 +162,7 @@
 		flex-direction: column;
 		gap: 1rem;
 		grid-area: upgrades;
+		z-index: 1;
 	}
 
 	.tabs {
@@ -171,6 +172,7 @@
 
 	.tabs button {
 		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(3px);
 		border: none;
 		border-radius: 8px;
 		color: inherit;

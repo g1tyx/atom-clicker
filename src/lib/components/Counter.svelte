@@ -17,6 +17,7 @@
 	.counter {
 		margin-bottom: 2rem;
 		text-align: center;
+		z-index: 1;
 
 		@media screen and (width <= 900px) {
 			margin-bottom: 1rem;

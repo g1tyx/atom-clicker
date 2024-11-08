@@ -5,7 +5,6 @@
 	import {buildings, gameManager, clickPower, hasBonus, totalClicks} from '../stores/gameStore';
 	import {formatNumber} from '../utils';
 	import {particles} from '../stores/canvas';
-	import {fade} from 'svelte/transition';
 
 	let spawnInterval: number;
 

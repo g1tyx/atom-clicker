@@ -45,6 +45,7 @@
 <style>
 	.buildings {
 		background: rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(3px);
 		border-radius: 8px;
 		padding: 1rem;
 		grid-area: buildings;
