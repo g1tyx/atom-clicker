@@ -1,3 +1,5 @@
+import {get} from 'svelte/store';
+import {atomsPerSecond} from '../stores/gameStore';
 import type {Achievement, GameState} from '../types';
 import {formatNumber} from '../utils';
 import {BUILDING_TYPES, BUILDINGS, type BuildingType} from './buildings';
@@ -71,10 +73,7 @@ function createAtomsPerSecondAchievements(): Achievement[] {
 			name: `${formattedCount} Atoms per Second`,
 			description: `Produce ${formattedCount} atoms per second`,
 			hidden: false,
-			condition: (state: GameState) => {
-				const totalAtomsPerSecond = Object.values(state.buildings).reduce((sum, b) => sum + b.count * b.rate, 0);
-				return totalAtomsPerSecond >= count;
-			},
+			condition: () => get(atomsPerSecond) >= count,
 		};
 	}
 	const numbers = Array(10).fill(0).map((_, i) => 10 ** (i * 2) * 10);
