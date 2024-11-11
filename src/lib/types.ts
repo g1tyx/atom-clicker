@@ -12,9 +12,14 @@ export interface Upgrade {
 	description: string;
 	id: string;
 	name: string;
+	effects: Effect[];
+}
+
+export interface Effect {
 	target?: string;
-	type: 'building' | 'click_aps' | 'click_mul' | 'click_val' | 'global' | 'power_up_interval_mul';
+	type: 'building' | 'click' | 'global' | 'power_up';
 	value: number;
+	value_type: 'add' | 'add_aps' | 'multiply';
 }
 
 export interface Achievement {
