@@ -1,15 +1,13 @@
 <script lang="ts">
 	import {gameManager} from '../helpers/gameManager';
-	import {atoms, buildings, upgrades} from '../stores/gameStore';
-	import type {BuildingType} from '../data/buildings';
+	import {atoms, upgrades} from '../stores/gameStore';
 	import {UPGRADES} from '../data/upgrades';
 	import {formatNumber} from '../utils';
 
 	$: availableUpgrades = Object.values(UPGRADES).filter(upgrade => {
-		if (upgrade.type === 'building' && ($buildings[upgrade.target as BuildingType]?.count ?? 0) < 1) {
-			return false;
-		}
-		return !$upgrades.includes(upgrade.id);
+		const condition = upgrade.condition?.(gameManager.getCurrentState()) ?? true;
+
+		return condition && !$upgrades.includes(upgrade.id);
 	}).sort((a, b) => a.cost - b.cost);
 
 	$: visibleUpgrades = availableUpgrades.slice(0, 10);

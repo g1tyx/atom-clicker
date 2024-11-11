@@ -1,10 +1,11 @@
-import type {Effect, Upgrade} from '../types';
+import type {Effect, GameState, Upgrade} from '../types';
 import {capitalize, formatNumber, shortNumberText} from '../utils';
 import {BUILDING_TYPES, BUILDINGS, type BuildingType} from './buildings';
 
 export const SPECIAL_UPGRADES: Upgrade[] = [];
 
 interface CreateUpgradesOptions {
+	condition?: (state: GameState) => boolean;
 	cost: (index: number) => number;
 	count: number;
 	description: (index: number, effects: Effect[]) => string;
@@ -18,6 +19,7 @@ function createUpgrades(options: CreateUpgradesOptions): Upgrade[] {
 	for (let i = 1; i <= options.count; i++) {
 		const effects = options.effects(i);
 		upgrades.push({
+			condition: options.condition,
 			cost: options.cost(i),
 			description: options.description(i, effects),
 			effects,
@@ -32,6 +34,7 @@ function createBuildingUpgrades(buildingType: BuildingType) {
 	const building = BUILDINGS[buildingType];
 	return createUpgrades(
 		{
+			condition: state => state.buildings[buildingType]?.unlocked === true,
 			count: 12,
 			id: buildingType.toLowerCase(),
 			name: i => `${building.name} Boost ${i}`,

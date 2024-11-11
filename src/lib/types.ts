@@ -10,11 +10,12 @@ export interface Building {
 }
 
 export interface Upgrade {
+	condition?: (state: GameState) => boolean;
 	cost: number;
 	description: string;
+	effects: Effect[];
 	id: string;
 	name: string;
-	effects: Effect[];
 }
 
 export interface Effect {
