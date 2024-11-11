@@ -2,7 +2,7 @@ import type {BuildingType} from '../data/buildings';
 import type {GameState} from '../types';
 
 export const SAVE_KEY = 'atomic-clicker-save';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 // Helper functions for state management
 export function loadSavedState(): GameState | null {
@@ -61,7 +61,7 @@ function isValidGameState(state: any): state is GameState {
 	return checks.every(([key, validator]) => key in state && validator(state[key]));
 }
 
-function migrateSavedState(savedState: any): GameState {
+function migrateSavedState(savedState: any): GameState | undefined {
 	if (!('buildings' in savedState)) return savedState;
 
 	if (!('version' in savedState)) {
@@ -73,6 +73,11 @@ function migrateSavedState(savedState: any): GameState {
 			};
 			return acc;
 		}, {} as GameState['buildings']);
+	}
+
+	if (savedState.version === 1) {
+		// Hard reset due to balancing
+		return undefined;
 	}
 
 	return savedState;

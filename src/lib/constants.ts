@@ -1,1 +1,1 @@
-export const BUILDING_COST_MULTIPLIER = 1.12;
+export const BUILDING_COST_MULTIPLIER = 1.16;
