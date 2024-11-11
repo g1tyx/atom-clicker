@@ -21,6 +21,12 @@ export const gameManager = {
 			totalClicks.set(savedState.totalClicks);
 			upgrades.set(savedState.upgrades.filter(u => u in UPGRADES));
 
+			get(activePowerUps).forEach(powerUp =>
+				setTimeout(() => {
+					this.removePowerUp(powerUp.id);
+				}, powerUp.duration - (Date.now() - powerUp.startTime))
+			);
+
 			// Save in case of data migration
 			this.save();
 		}
