@@ -34,7 +34,7 @@
 		>
 			<div class="info">
 				<h3>{obfuscated ? '???' : building.name} {saveData?.count ? `(${saveData.count})` : ''}</h3>
-				<p>Producing: {formatNumber($buildingProductions[type] ?? building.rate)} atoms/s</p>
+				<p>{saveData && saveData.count > 0 ? 'Producing' : 'Will produce'}: {formatNumber($buildingProductions[type] ?? building.rate)} atoms/s</p>
 			</div>
 			<div class="cost">
 				Cost: {formatNumber(saveData?.cost ?? building.cost)} atoms
