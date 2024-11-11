@@ -13,7 +13,7 @@ export interface Upgrade {
 	id: string;
 	name: string;
 	target?: string;
-	type: 'click_aps' | 'click_mul' | 'click_val' | 'building' | 'global';
+	type: 'building' | 'click_aps' | 'click_mul' | 'click_val' | 'global' | 'power_up_interval_mul';
 	value: number;
 }
 
@@ -45,3 +45,5 @@ export interface GameState {
 	totalClicks: number;
 	upgrades: string[];
 }
+
+export type Range = [number, number];

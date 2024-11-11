@@ -1,5 +1,6 @@
 <script lang="ts">
-	import {atoms, gameManager, buildings, upgrades} from '../stores/gameStore';
+	import {gameManager} from '../helpers/gameManager';
+	import {atoms, buildings, upgrades} from '../stores/gameStore';
 	import type {BuildingType} from '../data/buildings';
 	import {UPGRADES} from '../data/upgrades';
 	import {formatNumber} from '../utils';

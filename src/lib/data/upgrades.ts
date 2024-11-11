@@ -83,11 +83,29 @@ function createGlobalUpgrades() {
 	return upgrades;
 }
 
+function createPowerUpIntervalUpgrades() {
+	const upgrades: Upgrade[] = [];
+	for (let i = 1; i <= 9; i++) {
+		const id = `power_up_interval_${i}`;
+		const value = i > 5 ? 0.9 : 0.8;
+		upgrades.push({
+			id,
+			name: `Power Up Interval ${i}`,
+			description: `Reduce power up interval by ${Math.round((1 - value) * 100)}%`,
+			cost: 10000 * 2 ** (i * 7),
+			type: 'power_up_interval_mul',
+			value,
+		});
+	}
+	return upgrades;
+}
+
 const upgrades= [
 	...SPECIAL_UPGRADES,
 	...BUILDING_TYPES.map(createBuildingUpgrades).flat(),
 	...createClickPowerUpgrades(),
 	...createGlobalUpgrades(),
-]
+	...createPowerUpIntervalUpgrades(),
+];
 
 export const UPGRADES = Object.fromEntries(upgrades.map(upgrade => [upgrade.id, upgrade]));

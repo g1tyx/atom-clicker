@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Ticker} from 'pixi.js';
+	import {gameManager} from './lib/helpers/gameManager';
 	import Analytics from './lib/components/Analytics.svelte';
 	import SEO from './lib/components/SEO.svelte';
 	import Canvas from './lib/components/Canvas.svelte';
@@ -13,7 +14,7 @@
 	import Upgrades from './lib/components/Upgrades.svelte';
 	import {setGlobals} from './lib/globals';
 	import {SAVE_KEY} from './lib/helpers/saves';
-	import {atomsPerSecond, gameManager} from './lib/stores/gameStore';
+	import {atomsPerSecond} from './lib/stores/gameStore';
 	import {app} from './lib/stores/pixi';
 
 	const SAVE_INTERVAL = 1000;

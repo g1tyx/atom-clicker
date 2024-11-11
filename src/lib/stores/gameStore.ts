@@ -1,11 +1,8 @@
-import {derived, get, writable} from 'svelte/store';
-import {BUILDING_COST_MULTIPLIER} from '../constants';
-import {ACHIEVEMENTS} from '../data/achievements';
-import {BUILDINGS, type BuildingType} from '../data/buildings';
+import {derived, writable} from 'svelte/store';
+import {type BuildingType} from '../data/buildings';
+import {POWER_UP_DEFAULT_INTERVAL} from '../data/powerUp';
 import {UPGRADES} from '../data/upgrades';
-import {loadSavedState, SAVE_KEY} from '../helpers/saves';
-import type {Building, GameState, PowerUp} from '../types';
-import {info} from './toasts';
+import type {Building, PowerUp, Range} from '../types';
 
 // Individual stores
 export const achievements = writable<string[]>([]);
@@ -32,9 +29,7 @@ export const globalMultiplier = derived(currentUpgradesBought, $currentUpgradesB
 	return globalUpgrades.reduce((acc, upgrade) => acc * upgrade.value, 1);
 });
 
-export const hasBonus = derived(activePowerUps, $activePowerUps => {
-	return $activePowerUps.length > 0;
-});
+export const hasBonus = derived(activePowerUps, $activePowerUps => $activePowerUps.length > 0);
 
 export const atomsPerSecond = derived(
 	[
@@ -49,7 +44,7 @@ export const atomsPerSecond = derived(
 				.filter(u => u.type === 'building' && u.target === type)
 				.reduce((acc, upgrade) => acc * upgrade.value, 1);
 
-			return total + (building.count * building.rate * buildingMultiplier);
+			return total + building.count * building.rate * buildingMultiplier;
 		}, 0);
 
 		return baseProduction * $globalMultiplier * $bonusMultiplier;
@@ -69,12 +64,12 @@ export const clickPower = derived(
 
 		const clickPowerAPSUpgrades = $currentUpgradesBought.filter(u => u.type === 'click_aps');
 		const clickPowerAPS = clickPowerAPSUpgrades.reduce((acc, upgrade) => acc + upgrade.value, 0);
-		const clickPowerAPSMultiplier = ($atomsPerSecond * clickPowerAPS);
+		const clickPowerAPSValue = $atomsPerSecond * clickPowerAPS;
 
 		const clickPowerValUpgrades = $currentUpgradesBought.filter(u => u.type === 'click_val');
 		const clickPowerValue = clickPowerValUpgrades.reduce((acc, upgrade) => acc + upgrade.value, 1);
 
-		return (clickPowerValue * clickPowerMultiplier + clickPowerAPSMultiplier) * $globalMultiplier * $bonusMultiplier;
+		return (clickPowerValue * clickPowerMultiplier + clickPowerAPSValue) * $globalMultiplier * $bonusMultiplier;
 	}
 );
 
@@ -102,130 +97,8 @@ export const buildingProductions = derived(
 	}
 );
 
-// Game store manager
-export const gameManager = {
-	initialize() {
-		const savedState = loadSavedState();
-		if (savedState) {
-			achievements.set(savedState.achievements.filter(a => a in ACHIEVEMENTS));
-			activePowerUps.set(savedState.activePowerUps);
-			atoms.set(savedState.atoms);
-			buildings.set(savedState.buildings);
-			lastSave.set(savedState.lastSave);
-			totalClicks.set(savedState.totalClicks);
-			upgrades.set(savedState.upgrades.filter(u => u in UPGRADES));
-
-			// Save in case of data migration
-			this.save();
-		}
-
-		// Check achievements periodically
-		setInterval(() => {
-			const state = this.getCurrentState();
-
-			Object.entries(ACHIEVEMENTS).forEach(([name, achievement]) => {
-				if (!state.achievements.includes(name) && achievement.condition(state)) {
-					achievements.update(current => [
-						...current,
-						name
-					]);
-					info("Achievement unlocked", achievement.name);
-				}
-			});
-		}, 1000);
-	},
-
-	getCurrentState(): GameState {
-		return {
-			achievements: get(achievements),
-			activePowerUps: get(activePowerUps),
-			atoms: get(atoms),
-			buildings: get(buildings),
-			lastSave: get(lastSave),
-			totalClicks: get(totalClicks),
-			upgrades: get(upgrades),
-		};
-	},
-
-	addAtoms(amount: number) {
-		atoms.update(current => current + amount);
-	},
-
-	purchaseBuilding(type: BuildingType) {
-		const currentState = this.getCurrentState();
-		const building = BUILDINGS[type];
-		const currentBuilding = currentState.buildings[type] ?? {
-			cost: building.cost,
-			rate: building.rate,
-			count: 0,
-			unlocked: true
-		};
-
-		if (currentState.atoms < currentBuilding.cost) return;
-
-		atoms.update(current => current - currentBuilding.cost);
-		buildings.update(current => ({
-			...current,
-			[type]: {
-				...currentBuilding,
-				cost: Math.round(currentBuilding.cost * BUILDING_COST_MULTIPLIER),
-				rate: currentBuilding.rate,
-				count: currentBuilding.count + 1,
-			},
-		}));
-	},
-
-	unlockBuilding(type: BuildingType) {
-		if (type in get(buildings)) return;
-
-		buildings.update(current => ({
-			...current,
-			[type]: {
-				cost: BUILDINGS[type].cost,
-				rate: BUILDINGS[type].rate,
-				count: 0,
-				unlocked: true
-			}
-		}));
-	},
-
-	purchaseUpgrade(id: string) {
-		const currentState = this.getCurrentState();
-		const upgrade = UPGRADES[id];
-		const purchased = currentState.upgrades.includes(id);
-
-		if (!purchased && currentState.atoms >= upgrade.cost) {
-			atoms.update(current => current - upgrade.cost);
-			upgrades.update(current => [
-				...current,
-				id
-			]);
-		}
-	},
-
-	addPowerUp(powerUp: PowerUp) {
-		activePowerUps.update(current => [
-			...current,
-			powerUp
-		]);
-	},
-
-	removePowerUp(id: string) {
-		activePowerUps.update(current => current.filter(p => p.id !== id));
-	},
-
-	reset() {
-		achievements.set([]);
-		activePowerUps.set([]);
-		atoms.set(0);
-		buildings.set({});
-		lastSave.set(Date.now());
-		totalClicks.set(0);
-		upgrades.set([]);
-	},
-
-	save() {
-		const currentState = this.getCurrentState();
-		localStorage.setItem(SAVE_KEY, JSON.stringify(currentState));
-	}
-};
+export const powerUpInterval = derived(currentUpgradesBought, ($upgrades) => {
+	const powerUpIntervalUpgradesMul = $upgrades.filter(u => u.type === 'power_up_interval_mul');
+	const powerUpInterval = powerUpIntervalUpgradesMul.reduce((acc, upgrade) => acc * upgrade.value, 1);
+	return POWER_UP_DEFAULT_INTERVAL.map(interval => interval * powerUpInterval) as Range;
+});

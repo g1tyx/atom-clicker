@@ -1,8 +1,9 @@
 <script lang="ts">
+	import {gameManager} from '../helpers/gameManager';
 	import {BUILDING_TYPES} from '../data/buildings';
 	import {onDestroy} from 'svelte';
 	import {createClickParticle, createClickTextParticle, type Particle} from '../helpers/particles';
-	import {buildings, gameManager, clickPower, hasBonus, totalClicks} from '../stores/gameStore';
+	import {buildings, clickPower, hasBonus, totalClicks} from '../stores/gameStore';
 	import {formatNumber} from '../utils';
 	import {particles} from '../stores/canvas';
 
@@ -29,7 +30,7 @@
 <div
 	class="atom"
 	class:bonus={$hasBonus}
-	on:click={async (e) => await handleClick(e)}
+	on:click={async e => await handleClick(e)}
 >
 	{#each BUILDING_TYPES.filter(name => name in $buildings) as name, i}
 		{@const data = $buildings[name]}

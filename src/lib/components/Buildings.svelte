@@ -1,6 +1,7 @@
 <script lang="ts">
+	import {gameManager} from '../helpers/gameManager';
 	import {type BuildingData, BUILDINGS, type BuildingType} from '../data/buildings';
-	import {buildingProductions, atoms, buildings, gameManager} from '../stores/gameStore';
+	import {buildingProductions, atoms, buildings} from '../stores/gameStore';
 	import type {Building} from '../types';
 	import {formatNumber} from '../utils';
 	import {fade} from 'svelte/transition';

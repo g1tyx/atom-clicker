@@ -1,7 +1,8 @@
 <script lang="ts">
 	import {onDestroy, onMount} from 'svelte';
 	import {fade} from 'svelte/transition';
-	import {gameManager} from '../stores/gameStore';
+	import {gameManager} from '../helpers/gameManager';
+	import {powerUpInterval} from '../stores/gameStore';
 	import type {PowerUp} from '../types';
 	import {randomBetween} from '../utils';
 
@@ -41,7 +42,7 @@
 		timeout = setTimeout(() => {
 			spawnBonusAtom();
 			setRandomInterval();
-		}, randomBetween(180_000, 300_000));
+		}, randomBetween($powerUpInterval[0], $powerUpInterval[1]));
 	}
 
 	let timeout: number;
