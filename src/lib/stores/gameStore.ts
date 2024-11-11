@@ -2,7 +2,7 @@ import {derived, get, writable} from 'svelte/store';
 import {type BuildingType} from '../data/buildings';
 import {POWER_UP_DEFAULT_INTERVAL} from '../data/powerUp';
 import {UPGRADES} from '../data/upgrades';
-import type {Building, Effect, PowerUp, Range, Upgrade} from '../types';
+import type {Building, Effect, GameState, PowerUp, Range, Upgrade} from '../types';
 
 // Individual stores
 export const achievements = writable<string[]>([]);
@@ -39,7 +39,7 @@ function getUpgradesWithEffects(upgrades: Upgrade[], options: SearchEffectsOptio
 	});
 }
 
-function calculateEffects(upgrades: Upgrade[], defaultValue: number = 0, atomsPerSecond?: number): number {
+function calculateEffects(upgrades: Upgrade[], defaultValue: number = 0): number {
 	const addEffects = upgrades.flatMap(upgrade => upgrade.effects.filter(effect => effect.value_type === 'add'));
 	const addEffectsResult = addEffects.reduce(
 		(accEffects, effect) => accEffects + effect.value, defaultValue
@@ -49,14 +49,20 @@ function calculateEffects(upgrades: Upgrade[], defaultValue: number = 0, atomsPe
 	const addAPSEffectsMultiplier = addAPSEffects.reduce(
 		(accEffects, effect) => accEffects + effect.value, 0
 	);
-	const addAPSEffectsResult = atomsPerSecond ? atomsPerSecond * addAPSEffectsMultiplier : 0;
+	const addAPSEffectsResult = addAPSEffectsMultiplier > 0 ? get(atomsPerSecond) * addAPSEffectsMultiplier : 0;
+
+	const addAchEffects = upgrades.flatMap(upgrade => upgrade.effects.filter(effect => effect.value_type === 'add_ach'));
+	const addAchEffectsMultiplier = addAchEffects.reduce(
+		(accEffects, effect) => accEffects + effect.value, 0
+	);
+	const addAchEffectsResult = addAchEffectsMultiplier > 0 ? 1 + get(achievements).length * addAchEffectsMultiplier : 1;
 
 	const multiplyEffects = upgrades.flatMap(upgrade => upgrade.effects.filter(effect => effect.value_type === 'multiply'));
 	const multiplyEffectsMultiplier = multiplyEffects.reduce(
 		(accEffects, effect) => accEffects * effect.value, 1
 	);
 
-	return addEffectsResult * multiplyEffectsMultiplier + addAPSEffectsResult;
+	return addEffectsResult * multiplyEffectsMultiplier * addAchEffectsResult + addAPSEffectsResult;
 }
 
 // Derived stores
@@ -98,14 +104,13 @@ export const atomsPerSecond = derived(
 export const clickPower = derived(
 	[
 		currentUpgradesBought,
-		atomsPerSecond,
 		globalMultiplier,
 		bonusMultiplier
 	],
-	([$currentUpgradesBought, $atomsPerSecond, $globalMultiplier, $bonusMultiplier]) => {
+	([$currentUpgradesBought, $globalMultiplier, $bonusMultiplier]) => {
 		const clickUpgrades = getUpgradesWithEffects($currentUpgradesBought, { type: 'click' });
 
-		return calculateEffects(clickUpgrades, 1, $atomsPerSecond) * $globalMultiplier * $bonusMultiplier;
+		return calculateEffects(clickUpgrades, 1) * $globalMultiplier * $bonusMultiplier;
 	}
 );
 

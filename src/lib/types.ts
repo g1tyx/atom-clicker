@@ -22,7 +22,7 @@ export interface Effect {
 	target?: string;
 	type: 'building' | 'click' | 'global' | 'power_up';
 	value: number;
-	value_type: 'add' | 'add_aps' | 'multiply';
+	value_type: 'add' | 'add_aps' | 'add_ach' | 'multiply';
 }
 
 export interface Achievement {
