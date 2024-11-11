@@ -96,7 +96,7 @@ export const buildingProductions = derived(
 			if (building) {
 				const upgrades = getUpgradesWithEffects($currentUpgradesBought, { target: type, type: 'building' });
 				const multiplier = calculateEffects(upgrades, building.rate);
-				const levelMultiplier = building.level > 0 ? building.count * (building.level + 1) : 1;
+				const levelMultiplier = building.level > 0 ? (building.count / 2) ** (building.level + 1) / 5 : 1;
 				production = building.count * multiplier * levelMultiplier * $globalMultiplier * $bonusMultiplier;
 			}
 			return {
@@ -119,10 +119,11 @@ export const atomsPerSecond = derived(
 export const clickPower = derived(
 	[
 		currentUpgradesBought,
+		atomsPerSecond,
 		globalMultiplier,
 		bonusMultiplier
 	],
-	([$currentUpgradesBought, $globalMultiplier, $bonusMultiplier]) => {
+	([$currentUpgradesBought, $atomsPerSecond, $globalMultiplier, $bonusMultiplier]) => {
 		const clickUpgrades = getUpgradesWithEffects($currentUpgradesBought, { type: 'click' });
 
 		return calculateEffects(clickUpgrades, 1) * $globalMultiplier * $bonusMultiplier;
