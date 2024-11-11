@@ -9,14 +9,16 @@ export const SPECIAL_ACHIEVEMENTS: Achievement[] = [
 		id: 'first_atom',
 		name: 'Baby Steps',
 		description: 'Click your first atom',
-		hidden: false,
 		condition: (state: GameState) => state.atoms >= 1,
 	},
-{
+	{
 		id: 'secret_achievement',
 		name: 'Have more than 100 buildings',
 		description: 'A mysterious achievement',
-		hidden: true,
+		hiddenCondition: (state: GameState) => {
+			const totalBuildings = Object.values(state.buildings).reduce((sum, b) => sum + b.count, 0);
+			return totalBuildings >= 100;
+		},
 		condition: (state: GameState) => {
 			const totalBuildings = Object.values(state.buildings).reduce((sum, b) => sum + b.count, 0);
 			return totalBuildings >= 100;
@@ -32,7 +34,7 @@ function createBuildingAchievements(buildingId: BuildingType): Achievement[] {
 			id: `${number}_${buildingId}`,
 			name: `${countName} ${name}`,
 			description,
-			hidden: false,
+			hiddenCondition: (state: GameState) => state.buildings[buildingId] === undefined || state.buildings[buildingId].count === 0,
 			condition: (state: GameState) => state.buildings[buildingId] !== undefined && state.buildings[buildingId].count >= number,
 		};
 	}
@@ -54,7 +56,7 @@ function createBuildingTotalAchievements(): Achievement[] {
 			id: `total_${count}`,
 			name: `${count} Buildings`,
 			description: `Own a total of ${count} buildings`,
-			hidden: false,
+			hiddenCondition: (state: GameState) => Object.values(state.buildings).every(b => b.count === 0),
 			condition: (state: GameState) => {
 				const totalBuildings = Object.values(state.buildings).reduce((sum, b) => sum + b.count, 0);
 				return totalBuildings >= count;
@@ -71,7 +73,7 @@ function createBuildingLevelsAchievements(): Achievement[] {
 			id: `buildings_levels_${level}`,
 			name: `Levels ${level}`,
 			description: `Have a total of ${level} buildings levels`,
-			hidden: false,
+			hiddenCondition: (state: GameState) => Object.values(state.buildings).every(b => b.level === 0),
 			condition: (state: GameState) => {
 				const totalLevels = Object.values(state.buildings).reduce((sum, b) => sum + b.level, 0);
 				return totalLevels >= level;
@@ -89,7 +91,6 @@ function createAtomsPerSecondAchievements(): Achievement[] {
 			id: `aps_${formattedCount.toLowerCase()}`,
 			name: `${formattedCount} Atoms per Second`,
 			description: `Produce ${formattedCount} atoms per second`,
-			hidden: false,
 			condition: () => get(atomsPerSecond) >= count,
 		};
 	}
@@ -104,7 +105,7 @@ function createTotalClicksAchievements(): Achievement[] {
 			id: `clicks_${count}`,
 			name: `${formatNumber(count)} Clicks`,
 			description: `Click ${formatNumber(count)} times`,
-			hidden: false,
+			hiddenCondition: (state: GameState) => state.totalClicks === 0,
 			condition: (state: GameState) => state.totalClicks >= count,
 		};
 	}

@@ -64,7 +64,8 @@
 		messageShown = true;
 		powerUp.startTime = Date.now();
 		gameManager.addPowerUp(powerUp);
-		setTimeout(() => gameManager.removePowerUp(powerUp.id), powerUp.duration);
+		const id = powerUp.id;
+		setTimeout(() => gameManager.removePowerUp(id), powerUp.duration);
 		setTimeout(() => messageShown = false, 3_000);
 	}
 

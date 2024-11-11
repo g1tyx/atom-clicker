@@ -28,7 +28,7 @@ export interface Effect {
 export interface Achievement {
 	condition: (state: GameState) => boolean;
 	description: string;
-	hidden: boolean;
+	hiddenCondition?: (state: GameState) => boolean;
 	id: string;
 	name: string;
 }

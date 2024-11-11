@@ -1,4 +1,5 @@
 <script lang="ts">
+	import {gameManager} from '../helpers/gameManager';
 	import {ACHIEVEMENTS} from '../data/achievements';
 	import {achievements} from '../stores/gameStore';
 
@@ -9,14 +10,15 @@
 </script>
 
 <div class="achievements">
-	<h2>Achievements</h2>
+	<h2>Achievements ({$achievements.length}/{Object.keys(ACHIEVEMENTS).length})</h2>
 	<div class="achievement-grid">
 		{#each unlockedAchievements as achievement}
+			{@const hidden = achievement.hiddenCondition?.(gameManager.getCurrentState()) === true}
 			<div class="achievement" class:locked={!achievement.unlocked}>
 				<!-- <div class="icon">{achievement.icon}</div> -->
 				<div class="info">
-					<h3>{achievement.hidden && !achievement.unlocked ? '???' : achievement.name}</h3>
-					<p>{achievement.hidden && !achievement.unlocked ? '???' : achievement.description}</p>
+					<h3>{hidden && !achievement.unlocked ? '???' : achievement.name}</h3>
+					<p>{hidden && !achievement.unlocked ? '???' : achievement.description}</p>
 				</div>
 			</div>
 		{/each}
