@@ -19,7 +19,7 @@ function createUpgrades(options: CreateUpgradesOptions): Upgrade[] {
 	for (let i = 1; i <= options.count; i++) {
 		const effects = options.effects(i);
 		upgrades.push({
-			condition: state => options.condition?.(i, state) === true,
+			condition: state => options.condition?.(i, state) !== false,
 			cost: options.cost(i),
 			description: options.description(i, effects),
 			effects,
@@ -38,7 +38,7 @@ function createBuildingUpgrades(buildingType: BuildingType) {
 		id: buildingType.toLowerCase(),
 		name: i => `${building.name} Boost ${i}`,
 		description: (_, effects) => `${capitalize(shortNumberText(effects[0]!.value))} ${building.name} production`,
-		cost: i => building.cost * 2 ** (i * 2),
+		cost: i => building.cost * 2 ** (i * 4),
 		effects: i => [
 			{
 				type: 'building',
