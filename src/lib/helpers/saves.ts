@@ -1,8 +1,8 @@
-import type {BuildingType} from '../data/buildings';
-import type {GameState} from '../types';
+import {BUILDING_LEVEL_UP_COST, type BuildingType} from '../data/buildings';
+import type {Building, GameState} from '../types';
 
 export const SAVE_KEY = 'atomic-clicker-save';
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 // Helper functions for state management
 export function loadSavedState(): GameState | null {
@@ -78,6 +78,14 @@ function migrateSavedState(savedState: any): GameState | undefined {
 	if (savedState.version === 1) {
 		// Hard reset due to balancing
 		return undefined;
+	}
+
+	if (savedState.version === 2) {
+		Object.entries<Partial<Building>>(savedState.buildings)?.forEach(([key, building]) => {
+			building.level = Math.floor((building.count ?? 0) / BUILDING_LEVEL_UP_COST);
+			savedState[key] = building;
+		});
+		savedState.version = 3;
 	}
 
 	return savedState;

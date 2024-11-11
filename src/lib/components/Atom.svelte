@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {gameManager} from '../helpers/gameManager';
-	import {BUILDING_TYPES} from '../data/buildings';
+	import {BUILDING_TYPES, BUILDING_COLORS, BUILDING_LEVEL_UP_COST} from '../data/buildings';
 	import {onDestroy} from 'svelte';
 	import {createClickParticle, createClickTextParticle, type Particle} from '../helpers/particles';
 	import {buildings, clickPower, hasBonus, totalClicks} from '../stores/gameStore';
@@ -36,8 +36,9 @@
 		{@const data = $buildings[name]}
 
 		{#if data && data.count > 0}
-			<div class="electron-shell" style="--line: {i}; --count: {data.count};">
-				{#each new Array(data.count) as _, j}
+			{@const color = BUILDING_COLORS[data.level]}
+			<div class="electron-shell" style="--line: {i}; --count: {data.count % BUILDING_LEVEL_UP_COST}; --color: {color};">
+				{#each new Array(data.count % BUILDING_LEVEL_UP_COST) as _, j}
 					<div class="electron" style="--i: {j};"></div>
 				{/each}
 			</div>
@@ -96,7 +97,7 @@
 	.electron-shell {
 		--radius: calc(var(--initial-electrons-spacing) + var(--line) * var(--electron-line-spacing));
 		animation: rotate calc((4s + var(--line) * 2s) / var(--speed)) linear infinite;
-		border: 2px solid #4a90e210;
+		border: 2px solid color-mix(in oklab, var(--color) 10%, transparent 10%);
 		border-radius: 50%;
 		height: var(--radius);
 		position: absolute;
@@ -113,9 +114,9 @@
 		left: calc(50% + var(--radius) / 2 * cos(var(--angle)) - var(--size) / 2);
 		top: calc(50% + var(--radius) / 2 * sin(var(--angle)) - var(--size) / 2);
 
-		background: #4a90e2;
+		background: var(--color);
 		border-radius: 50%;
-		box-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+		box-shadow: 0 0 10px color-mix(in oklab, var(--color) 50%, transparent 10%);
 		height: var(--size);
 		transition: all 0.5s;
 		position: absolute;

@@ -2,7 +2,7 @@ import {derived, get, writable} from 'svelte/store';
 import {type BuildingType} from '../data/buildings';
 import {POWER_UP_DEFAULT_INTERVAL} from '../data/powerUp';
 import {UPGRADES} from '../data/upgrades';
-import type {Building, Effect, GameState, PowerUp, Range, Upgrade} from '../types';
+import type {Building, Effect, PowerUp, Range, Upgrade} from '../types';
 
 // Individual stores
 export const achievements = writable<string[]>([]);
@@ -83,37 +83,6 @@ export const globalMultiplier = derived(currentUpgradesBought, $currentUpgradesB
 
 export const hasBonus = derived(activePowerUps, $activePowerUps => $activePowerUps.length > 0);
 
-export const atomsPerSecond = derived(
-	[
-		buildings,
-		currentUpgradesBought,
-		globalMultiplier,
-		bonusMultiplier
-	],
-	([$buildings, $currentUpgradesBought, $globalMultiplier, $bonusMultiplier]) => {
-		const baseProduction = Object.entries($buildings).reduce((total, [type, building]) => {
-			const buildingMultiplier = getUpgradesWithEffects($currentUpgradesBought, { target: type, type: 'building' });
-
-			return total + building.count * calculateEffects(buildingMultiplier, building.rate);
-		}, 0);
-
-		return baseProduction * $globalMultiplier * $bonusMultiplier;
-	}
-);
-
-export const clickPower = derived(
-	[
-		currentUpgradesBought,
-		globalMultiplier,
-		bonusMultiplier
-	],
-	([$currentUpgradesBought, $globalMultiplier, $bonusMultiplier]) => {
-		const clickUpgrades = getUpgradesWithEffects($currentUpgradesBought, { type: 'click' });
-
-		return calculateEffects(clickUpgrades, 1) * $globalMultiplier * $bonusMultiplier;
-	}
-);
-
 export const buildingProductions = derived(
 	[
 		buildings,
@@ -127,13 +96,36 @@ export const buildingProductions = derived(
 			if (building) {
 				const upgrades = getUpgradesWithEffects($currentUpgradesBought, { target: type, type: 'building' });
 				const multiplier = calculateEffects(upgrades, building.rate);
-				production = building.count * multiplier * $globalMultiplier * $bonusMultiplier;
+				const levelMultiplier = building.level > 0 ? building.count * (building.level + 1) : 1;
+				production = building.count * multiplier * levelMultiplier * $globalMultiplier * $bonusMultiplier;
 			}
 			return {
 				...acc,
 				[type]: production,
 			};
 		}, {} as Record<BuildingType, number>);
+	}
+);
+
+export const atomsPerSecond = derived(
+	[
+		buildingProductions,
+	],
+	([$buildingProductions]) => {
+		return Object.entries($buildingProductions).reduce((total, [_, building]) => total + building, 0);
+	}
+);
+
+export const clickPower = derived(
+	[
+		currentUpgradesBought,
+		globalMultiplier,
+		bonusMultiplier
+	],
+	([$currentUpgradesBought, $globalMultiplier, $bonusMultiplier]) => {
+		const clickUpgrades = getUpgradesWithEffects($currentUpgradesBought, { type: 'click' });
+
+		return calculateEffects(clickUpgrades, 1) * $globalMultiplier * $bonusMultiplier;
 	}
 );
 

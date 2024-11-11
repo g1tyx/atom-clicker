@@ -62,7 +62,24 @@ function createBuildingTotalAchievements(): Achievement[] {
 		};
 	}
 
-	return [100, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1500, 2000, 2500, 3000].map(createBuildingTotalAchievement);
+	return [50, 100, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1500, 2000, 2500, 3000].map(createBuildingTotalAchievement);
+}
+
+function createBuildingLevelsAchievements(): Achievement[] {
+	function createBuildingLevelAchievement(level: number): Achievement {
+		return {
+			id: `buildings_levels_${level}`,
+			name: `Levels ${level}`,
+			description: `Have a total of ${level} buildings levels`,
+			hidden: false,
+			condition: (state: GameState) => {
+				const totalLevels = Object.values(state.buildings).reduce((sum, b) => sum + b.level, 0);
+				return totalLevels >= level;
+			},
+		}
+	}
+
+	return [1, 2, 3, 5, 7, 10, 15, 20, 30, 50].map(createBuildingLevelAchievement);
 }
 
 function createAtomsPerSecondAchievements(): Achievement[] {
@@ -98,6 +115,7 @@ function createTotalClicksAchievements(): Achievement[] {
 const achievementsArray: Achievement[] = [
 	...BUILDING_TYPES.map(createBuildingAchievements).flat(),
 	...createBuildingTotalAchievements(),
+	...createBuildingLevelsAchievements(),
 	...createAtomsPerSecondAchievements(),
 	...createTotalClicksAchievements(),
 	...SPECIAL_ACHIEVEMENTS,

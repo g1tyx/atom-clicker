@@ -1,10 +1,10 @@
-import type {VERSION} from 'svelte/compiler';
 import type {BuildingType} from './data/buildings';
 import type {SAVE_VERSION} from './helpers/saves';
 
 export interface Building {
 	count: number;
 	cost: number;
+	level: number;
 	rate: number;
 	unlocked: boolean;
 }

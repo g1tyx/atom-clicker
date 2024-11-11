@@ -2,7 +2,7 @@
 import {get} from 'svelte/store';
 import {BUILDING_COST_MULTIPLIER} from '../constants';
 import {ACHIEVEMENTS} from '../data/achievements';
-import {BUILDINGS, type BuildingType} from '../data/buildings';
+import {BUILDING_LEVEL_UP_COST, BUILDINGS, type BuildingType} from '../data/buildings';
 import {UPGRADES} from '../data/upgrades';
 import {loadSavedState, SAVE_KEY, SAVE_VERSION} from './saves';
 import {achievements, activePowerUps, atoms, buildings, lastSave, totalClicks, upgrades} from '../stores/gameStore';
@@ -64,6 +64,7 @@ export const gameManager = {
 		const currentBuilding = currentState.buildings[type] ?? {
 			cost: building.cost,
 			rate: building.rate,
+			level: 0,
 			count: 0,
 			unlocked: true,
 		};
@@ -78,6 +79,7 @@ export const gameManager = {
 				cost: Math.round(currentBuilding.cost * BUILDING_COST_MULTIPLIER),
 				rate: currentBuilding.rate,
 				count: currentBuilding.count + 1,
+				level: Math.floor((currentBuilding.count + 1) / BUILDING_LEVEL_UP_COST)
 			},
 		}));
 	},
@@ -90,6 +92,7 @@ export const gameManager = {
 			[type]: {
 				cost: BUILDINGS[type].cost,
 				rate: BUILDINGS[type].rate,
+				level: 0,
 				count: 0,
 				unlocked: true,
 			},

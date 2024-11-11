@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {gameManager} from '../helpers/gameManager';
-	import {type BuildingData, BUILDINGS, type BuildingType} from '../data/buildings';
-	import {buildingProductions, atoms, buildings} from '../stores/gameStore';
+	import {BUILDING_COLORS, type BuildingData, BUILDINGS, type BuildingType} from '../data/buildings';
+	import {buildingProductions, atoms, buildings, globalMultiplier, bonusMultiplier} from '../stores/gameStore';
 	import type {Building} from '../types';
 	import {formatNumber} from '../utils';
 	import {fade} from 'svelte/transition';
@@ -24,17 +24,25 @@
 		{@const unaffordable = $atoms < (saveData?.cost ?? building.cost)}
 		{@const obfuscated = hiddenBuildings.some(([t]) => t === type)}
 		{@const hidden = hiddenBuildings.slice(1).some(([t]) => t === type)}
+		{@const level = saveData?.level ?? 0}
+		{@const color = BUILDING_COLORS[level]}
 
 		<div
 			class="building"
+			style="--color: {color};"
 			class:disabled={unaffordable}
 			on:click={() => {if (!unaffordable) gameManager.purchaseBuilding(type)}}
 			transition:fade
 			{hidden}
 		>
 			<div class="info">
-				<h3>{obfuscated ? '???' : building.name} {saveData?.count ? `(${saveData.count})` : ''}</h3>
-				<p>{saveData && saveData.count > 0 ? 'Producing' : 'Will produce'}: {formatNumber($buildingProductions[type] ?? building.rate)} atoms/s</p>
+				<h3>
+					{obfuscated ? '???' : building.name} {saveData?.count ? `(${saveData.count})` : ''}
+					{#if level > 0}
+						<span>⇮{level}</span>
+					{/if}
+				</h3>
+				<p>{saveData && saveData.count > 0 ? 'Producing' : 'Will produce'}: {formatNumber($buildingProductions[type] || building.rate * $globalMultiplier * $bonusMultiplier)} atoms/s</p>
 			</div>
 			<div class="cost">
 				Cost: {formatNumber(saveData?.cost ?? building.cost)} atoms
@@ -71,7 +79,7 @@
 	}
 
 	.info h3 {
-		color: #4a90e2;
+		color: var(--color);
 		font-size: 1rem;
 		margin: 0;
 	}
@@ -82,7 +90,7 @@
 	}
 
 	.cost {
-		color: #4a90e2;
+		color: var(--color);
 		font-size: 0.9rem;
 		margin-top: 0.5rem;
 	}

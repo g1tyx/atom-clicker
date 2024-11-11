@@ -46,6 +46,15 @@ export const BUILDINGS = {
 	},
 } as const;
 
+export const BUILDING_LEVEL_UP_COST = 100;
+
+export const BUILDING_COLORS = [
+	"#4a90e2",
+	"#e34b4b",
+	"#f9c80e",
+	"#6b4ae2",
+] as const;
+
 export const BUILDING_TYPES = Object.keys(BUILDINGS) as BuildingType[];
 
 export type BuildingType = keyof typeof BUILDINGS;

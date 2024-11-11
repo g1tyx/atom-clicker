@@ -13,7 +13,6 @@
 	import Counter from './lib/components/Counter.svelte';
 	import Upgrades from './lib/components/Upgrades.svelte';
 	import {setGlobals} from './lib/globals';
-	import {SAVE_KEY} from './lib/helpers/saves';
 	import {atomsPerSecond} from './lib/stores/gameStore';
 	import {app} from './lib/stores/pixi';
 
@@ -38,10 +37,12 @@
 
 		setGlobals();
 
+		console.log('Loaded');
+
 		// Save game state periodically
 		saveLoop = setInterval(() => {
 			try {
-				localStorage.setItem(SAVE_KEY, JSON.stringify(gameManager.getCurrentState()));
+				gameManager.save();
 			} catch (e) {
 				console.error('Failed to save game:', e);
 			}
