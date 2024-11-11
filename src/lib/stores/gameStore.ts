@@ -62,9 +62,6 @@ function calculateEffects(upgrades: Upgrade[], defaultValue: number = 0): number
 		(accEffects, effect) => accEffects * effect.value, 1
 	);
 
-	console.log({ addEffectsResult, addAchEffectsResult, addAPSEffectsMultiplier, addAPSEffectsResult, multiplyEffectsMultiplier});
-	console.log(addEffectsResult * multiplyEffectsMultiplier * addAchEffectsResult + addAPSEffectsResult);
-
 	return addEffectsResult * multiplyEffectsMultiplier * addAchEffectsResult + addAPSEffectsResult;
 }
 

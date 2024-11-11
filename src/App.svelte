@@ -37,8 +37,6 @@
 
 		setGlobals();
 
-		console.log('Loaded');
-
 		// Save game state periodically
 		saveLoop = setInterval(() => {
 			try {

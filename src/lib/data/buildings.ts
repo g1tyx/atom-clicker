@@ -53,6 +53,11 @@ export const BUILDING_COLORS = [
 	"#e34b4b",
 	"#f9c80e",
 	"#6b4ae2",
+	"#45d945",
+	"#4ae2c6",
+	"#b441ae",
+	"#4a4ae2",
+	"#e36d31",
 ] as const;
 
 export const BUILDING_TYPES = Object.keys(BUILDINGS) as BuildingType[];
