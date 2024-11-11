@@ -4,13 +4,37 @@
 	import {gameManager} from '../helpers/gameManager';
 	import {powerUpInterval} from '../stores/gameStore';
 	import type {PowerUp} from '../types';
-	import {randomBetween} from '../utils';
+	import {randomBetween, randomValue} from '../utils';
+	import {formatNumber} from '../utils.js';
 
-	let powerUp = {
-		description: 'Double atoms per second for 10 seconds',
-		duration: 10000,
+	const powerUps = [
+		{
+			duration: 40_000,
+			multiplier: 1.5,
+		},
+		{
+			duration: 20_000,
+			multiplier: 2,
+		},
+		{
+			duration: 15_000,
+			multiplier: 2.5,
+		},
+		{
+			duration: 5000,
+			multiplier: 8,
+		},
+		{
+			duration: 2500,
+			multiplier: 25,
+		}
+	];
+
+	const powerUp = {
+		description: '',
+		duration: 0,
 		id: Date.now().toString(),
-		multiplier: 2,
+		multiplier: 0,
 		name: 'Double Atoms',
 		startTime: Date.now(),
 	} satisfies PowerUp;
@@ -25,6 +49,11 @@
 
 		x = Math.random() * (window.innerWidth - margin * 2) + margin;
 		y = Math.random() * (window.innerHeight - margin * 2) + margin;
+		const randomPowerUp = randomValue(powerUps);
+		powerUp.multiplier = randomPowerUp.multiplier;
+		powerUp.duration = randomPowerUp.duration;
+		powerUp.description = `Multiplies atoms by ${formatNumber(powerUp.multiplier)} for ${formatNumber(powerUp.duration / 1000)} seconds`;
+		powerUp.id = Date.now().toString();
 		visible = true;
 
 		setTimeout(() => visible = false, 30_000);
@@ -33,6 +62,7 @@
 	function onClick() {
 		visible = false;
 		messageShown = true;
+		powerUp.startTime = Date.now();
 		gameManager.addPowerUp(powerUp);
 		setTimeout(() => gameManager.removePowerUp(powerUp.id), powerUp.duration);
 		setTimeout(() => messageShown = false, 3_000);

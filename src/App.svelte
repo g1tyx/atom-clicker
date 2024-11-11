@@ -5,7 +5,7 @@
 	import SEO from './lib/components/SEO.svelte';
 	import Canvas from './lib/components/Canvas.svelte';
 	import Toaster from './lib/components/Toaster.svelte';
-	import BonusAtom from './lib/components/BonusAtom.svelte';
+	import BonusPhoton from './lib/components/BonusPhoton.svelte';
 	import {onDestroy, onMount} from 'svelte';
 	import Achievements from './lib/components/Achievements.svelte';
 	import Atom from './lib/components/Atom.svelte';
@@ -70,7 +70,7 @@
 		<h1 class="loading">Loading...</h1>
 	{:else}
 		<Toaster/>
-		<BonusAtom/>
+		<BonusPhoton/>
 		<div class="game-container">
 			<div class="left-panel">
 				<div class="tabs">

@@ -122,24 +122,6 @@
 		width: var(--size);
 	}
 
-	:global(.particle) {
-		background: #4a90e2;
-		border-radius: 50%;
-		height: 8px;
-		pointer-events: none;
-		position: fixed;
-		width: 8px;
-	}
-
-	:global(.click) {
-		color: white;
-		font-size: 0.85rem;
-		font-weight: bold;
-		pointer-events: none;
-		position: fixed;
-		transform: translate(-50%, -50%);
-	}
-
 	@keyframes rotate {
 		from {
 			transform: rotate(0deg);

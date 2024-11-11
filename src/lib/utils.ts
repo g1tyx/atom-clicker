@@ -88,3 +88,7 @@ export function capitalize(str: string): string {
 export function randomBetween(min: number, max: number): number {
 	return Math.random() * (max - min) + min;
 }
+
+export function randomValue<T>(array: T[]): T {
+	return array[Math.floor(Math.random() * array.length)];
+}
