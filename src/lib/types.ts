@@ -1,4 +1,6 @@
+import type {VERSION} from 'svelte/compiler';
 import type {BuildingType} from './data/buildings';
+import type {SAVE_VERSION} from './helpers/saves';
 
 export interface Building {
 	count: number;
@@ -49,6 +51,7 @@ export interface GameState {
 	lastSave: number;
 	totalClicks: number;
 	upgrades: string[];
+	version: typeof SAVE_VERSION;
 }
 
 export type Range = [number, number];

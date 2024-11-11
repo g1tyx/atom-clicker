@@ -4,7 +4,7 @@ import {BUILDING_COST_MULTIPLIER} from '../constants';
 import {ACHIEVEMENTS} from '../data/achievements';
 import {BUILDINGS, type BuildingType} from '../data/buildings';
 import {UPGRADES} from '../data/upgrades';
-import {loadSavedState, SAVE_KEY} from './saves';
+import {loadSavedState, SAVE_KEY, SAVE_VERSION} from './saves';
 import {achievements, activePowerUps, atoms, buildings, lastSave, totalClicks, upgrades} from '../stores/gameStore';
 import {info} from '../stores/toasts';
 import type {GameState, PowerUp} from '../types';
@@ -50,6 +50,7 @@ export const gameManager = {
 			lastSave: get(lastSave),
 			totalClicks: get(totalClicks),
 			upgrades: get(upgrades),
+			version: SAVE_VERSION,
 		};
 	},
 

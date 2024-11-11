@@ -2,6 +2,7 @@ import type {BuildingType} from '../data/buildings';
 import type {GameState} from '../types';
 
 export const SAVE_KEY = 'atomic-clicker-save';
+export const SAVE_VERSION = 1;
 
 // Helper functions for state management
 export function loadSavedState(): GameState | null {
@@ -51,6 +52,10 @@ function isValidGameState(state: any): state is GameState {
 			'upgrades',
 			Array.isArray,
 		],
+		[
+			'version',
+			(v: any) => v === SAVE_VERSION,
+		]
 	] as const;
 
 	return checks.every(([key, validator]) => key in state && validator(state[key]));
@@ -59,17 +64,16 @@ function isValidGameState(state: any): state is GameState {
 function migrateSavedState(savedState: any): GameState {
 	if (!('buildings' in savedState)) return savedState;
 
-	// Migrate from old format
-	const buildings = Object.entries(savedState.buildings as Partial<GameState['buildings']>).reduce((acc, [key, value]) => {
-		acc[key as BuildingType] = {
-			...value,
-			unlocked: true,
-		};
-		return acc;
-	}, {} as GameState['buildings']);
+	if (!('version' in savedState)) {
+		// Migrate from old format
+		savedState.buildings = Object.entries(savedState.buildings as Partial<GameState['buildings']>).reduce((acc, [key, value]) => {
+			acc[key as BuildingType] = {
+				...value,
+				unlocked: true,
+			};
+			return acc;
+		}, {} as GameState['buildings']);
+	}
 
-	return {
-		...savedState,
-		buildings,
-	};
+	return savedState;
 }
