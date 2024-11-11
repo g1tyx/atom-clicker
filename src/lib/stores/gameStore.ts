@@ -62,6 +62,9 @@ function calculateEffects(upgrades: Upgrade[], defaultValue: number = 0): number
 		(accEffects, effect) => accEffects * effect.value, 1
 	);
 
+	console.log({ addEffectsResult, addAchEffectsResult, addAPSEffectsMultiplier, addAPSEffectsResult, multiplyEffectsMultiplier});
+	console.log(addEffectsResult * multiplyEffectsMultiplier * addAchEffectsResult + addAPSEffectsResult);
+
 	return addEffectsResult * multiplyEffectsMultiplier * addAchEffectsResult + addAPSEffectsResult;
 }
 
@@ -125,8 +128,11 @@ export const clickPower = derived(
 	],
 	([$currentUpgradesBought, $atomsPerSecond, $globalMultiplier, $bonusMultiplier]) => {
 		const clickUpgrades = getUpgradesWithEffects($currentUpgradesBought, { type: 'click' });
+		const apsClickUpgrades = getUpgradesWithEffects(clickUpgrades, { value_type: 'add_aps'});
+		const nonAPSClickUpgrades = clickUpgrades.filter(upgrade => !apsClickUpgrades.includes(upgrade));
 
-		return calculateEffects(clickUpgrades, 1) * $globalMultiplier * $bonusMultiplier;
+		const apsClickResult = calculateEffects(apsClickUpgrades, 1);
+		return calculateEffects(nonAPSClickUpgrades, 1) * $globalMultiplier * $bonusMultiplier + apsClickResult;
 	}
 );
 

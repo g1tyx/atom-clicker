@@ -57,12 +57,12 @@ function createClickPowerUpgrades() {
 		count: 12,
 		id: 'click_power_mul',
 		name: i => `Click Power ${i}`,
-		description: () => 'Double click power',
+		description: (_, effects) => `Add ${effects[0].value * 100 - 100}% click power`,
 		cost: i => 10 * 2 ** (i * 4),
-		effects: () => [
+		effects: i => [
 			{
 				type: 'click',
-				value: 2,
+				value: i < 6 ? 1.5 : 2,
 				value_type: 'multiply',
 			},
 		],
