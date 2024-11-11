@@ -471,6 +471,7 @@ var cnRegReplace = new Map([
     [/^Next at (.+) points$/, '下一个在 $1 点数'],
     [/^Have more than (.+) buildings$/, '拥有超过 $1 建筑'],
     [/^Produce (.+) atoms per second$/, '产出 $1 原子每秒'],
+    [/^Double atoms per second for (.+) seconds$/, '原子每秒的产量翻倍，持续 $1 秒'],
     [/^(.+) Atoms per Second$/, '$1 原子每秒'],
     [/^Gain (.+) of your Atoms per second per click$/, '每次点击获得 $1 你的每秒原子产量'],
     [/^Add (.+) atoms per click$/, '每次点击增加 $1 原子'],
