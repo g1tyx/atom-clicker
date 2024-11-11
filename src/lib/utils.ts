@@ -48,14 +48,14 @@ const SUFFIXES = [
 
 export function formatNumber(num: number): string {
 	if (!Number.isFinite(num)) {
-		throw new Error("Le nombre doit être fini.");
+		throw new Error(`Number '${num}' must be finite.`);
 	}
 
 	const absNum = Math.abs(num);
 	const sign = num < 0 ? "-" : "";
 
 	if (absNum < 1000) {
-		return `${num}`;
+		return `${num.toFixed(2)}`;
 	}
 
 	const exponent = Math.floor(Math.log(absNum) / Math.log(1000));
