@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {Ticker} from 'pixi.js';
+	import Header from './lib/components/Header.svelte';
 	import {gameManager} from './lib/helpers/gameManager';
 	import Analytics from './lib/components/Analytics.svelte';
 	import SEO from './lib/components/SEO.svelte';
@@ -63,6 +64,7 @@
 	<SEO/>
 </svelte:head>
 
+<Header/>
 <main>
 	<Canvas/>
 	{#if $app === null}
@@ -117,7 +119,7 @@
 
 <style>
 	main {
-		margin: 3rem auto;
+		margin-bottom: 3rem;
 
 		@media screen and (width <= 900px) {
 			margin: 0;
